@@ -11,12 +11,14 @@ import {
 const router = express.Router();
 
 router
-    .get('/', getAllUsers)
-    .post('/', createUser);
+    .route("/")
+    .get(users.getAllUsers)
+    .post(users.createUser);
 
 router
-    .get('/:id', getUser)
-    .delete('/:id', deleteUser)
-    .patch('/:id', updateUser);
+    .route("/:id")
+    .get(users.getUser)
+    .delete(users.deleteUser)
+    .patch(users.updateUser);
 
 export default router;
