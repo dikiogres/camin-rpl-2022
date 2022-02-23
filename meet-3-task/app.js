@@ -1,8 +1,11 @@
 import express from "express";
 //import mongoose from "mongoose";
-require("dotenv").config();
+//require("dotenv").config();
+import dotenv from "dotenv";
 import usersRoutes from './routes/users.js';
-//import connectDB from './db/connect';
+import connectDB from './db/connect.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
