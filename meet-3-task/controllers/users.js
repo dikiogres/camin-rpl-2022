@@ -1,19 +1,5 @@
-//import fs from "fs";
 import user from "../models/user.js"
 import User from "../models/user.js"
-//import {v4 as uuidv4} from 'uuid';
-
-// const getUserData = () => {
-//     const jsonData = fs.readFileSync('./db/products.json');
-//     return JSON.parse(jsonData)    
-// }
-
-// const saveUserData = (data) => {
-//     const stringifyData = JSON.stringify(data, null, 2);
-//     fs.writeFileSync('./db/products.json', stringifyData)
-// }
-// //let usersData = [];
-// let usersData = getUserData();
 
 export const getAllUsers = async (req, res) => {
     try{
