@@ -1,5 +1,5 @@
 //import fs from "fs";
-import user from "../models/user";
+import user from "../models/user.js"
 //import {v4 as uuidv4} from 'uuid';
 
 // const getUserData = () => {
@@ -44,7 +44,7 @@ export const createUser = async (req, res) => {
     }
 };
 
-export const getUser = (req, res)=>{
+export const getUser = async(req, res)=>{
     try{
         const user = await User.findById(req.params.id);
         res.status(200).json({
@@ -59,7 +59,7 @@ export const getUser = (req, res)=>{
     }
 };
 
-export const deleteUser = (req, res)=>{
+export const deleteUser = async (req, res)=>{
     try{
         const { id } = req.params.id;
         const user = await User.findByIdAndDelete(id);
@@ -113,6 +113,12 @@ export const updateUser = async (req, res)=> {
             msg: error
         })
     };
-
 }
 
+export default {
+    getAllUsers, 
+    createUser, 
+    getUser, 
+    deleteUser, 
+    updateUser
+};
