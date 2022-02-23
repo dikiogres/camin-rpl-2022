@@ -1,68 +1,118 @@
-import fs from "fs";
-import {v4 as uuidv4} from 'uuid';
+//import fs from "fs";
+import user from "../models/user";
+//import {v4 as uuidv4} from 'uuid';
 
-const getUserData = () => {
-    const jsonData = fs.readFileSync('./db/products.json');
-    return JSON.parse(jsonData)    
-}
+// const getUserData = () => {
+//     const jsonData = fs.readFileSync('./db/products.json');
+//     return JSON.parse(jsonData)    
+// }
 
-const saveUserData = (data) => {
-    const stringifyData = JSON.stringify(data, null, 2);
-    fs.writeFileSync('./db/products.json', stringifyData)
-}
-//let usersData = [];
-let usersData = getUserData();
+// const saveUserData = (data) => {
+//     const stringifyData = JSON.stringify(data, null, 2);
+//     fs.writeFileSync('./db/products.json', stringifyData)
+// }
+// //let usersData = [];
+// let usersData = getUserData();
 
-export const getAllUsers = (req, res) => {
-    res.status(200).send(usersData);
-}
-
-export const createUser = (req, res) => {
-
-    const user = req.body;
-
-    //const userWithId = { ... userData, id: uuidv4()};
-
-    if (user.firstName == null || user.lastName == null || user.age == null ) {
-        return res.status(401).send({error: true, msg: 'User data missing'})
+export const getAllUsers = async (req, res) => {
+    try{
+        const user = await User.find();
+        res.status(200).json({ 
+            success: true, 
+            data: user
+        });
+    }catch(error){
+        res.status(500).json({ 
+            success: false, 
+            msg: error
+        });
     }
+};
 
-    usersData.push({ ... user, id: uuidv4()})
-    saveUserData(usersData);
-
-    res.status(200).send(`User with the username ${user.firstName} added to database!`)
-}
+export const createUser = async (req, res) => {
+    try{
+        const user = await User.create(req.body);
+        res.status(200).json({
+            success: true, 
+            data: user
+        });
+    }catch(error){
+        res.status(500).json({
+            success: false, 
+            msg: error
+        })
+    }
+};
 
 export const getUser = (req, res)=>{
-    const { id } = req.params;
-
-    const foundUser = usersData.find((user)=>user.id === id);
-
-    res.status(200).send(foundUser)
-}
+    try{
+        const user = await User.findById(req.params.id);
+        res.status(200).json({
+            success: true, 
+            data: user
+        });
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            msg: error
+        });
+    }
+};
 
 export const deleteUser = (req, res)=>{
-    const { id } = req.params;
-
-    usersData = usersData.filter((user)=>  user.id !== id);
-    saveUserData(usersData);
-
-    res.status(200).send(`User with the id ${id} deleted from the database.`);
+    try{
+        const { id } = req.params.id;
+        const user = await User.findByIdAndDelete(id);
+        if(!item){
+            return res.status(404).json({
+                success: false,
+                msg: `There is no item with id: ${id}`
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            msg: `Item with id: ${id} deleted successfully`
+        });
+    }catch(error){
+        return res.status(500).json({
+            success: false,
+            msg: error
+        });
+    };
 }
 
-export const updateUser = (req, res)=> {
-    const { id } = req.params;
-    const { firstName, lastName, age } = req.body;
-
-    const user = usersData.find((user)=> user.id === id);
-
-    if (firstName) user.firstName = firstName;
-    else if(lastName) user.lastName = lastName;
-    else if(age) user.age = age;
-
-    saveUserData(usersData);
-
-    res.status(200).send(`User with the id ${id} has been updated`);
+export const updateUser = async (req, res)=> {
+    try{
+        const { id } = req.params;
+        const { firstName, lastName, age } = req.body;
+        
+        const user = await User.findByIdAndUpdate(id, {
+                firstName,
+                lastName,
+                age
+            },
+            {
+                new: true,
+                runValidators: true,
+                overwrite: true
+            }
+        );
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                msg: `User with id: ${id} not found`
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            data: user
+        })
+    }catch(error){
+        return res.status(500).json({
+            success: false,
+            msg: error
+        })
+    };
 
 }
 
