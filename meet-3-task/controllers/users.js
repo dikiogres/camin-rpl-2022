@@ -1,5 +1,6 @@
 //import fs from "fs";
 import user from "../models/user.js"
+import User from "../models/user.js"
 //import {v4 as uuidv4} from 'uuid';
 
 // const getUserData = () => {
@@ -61,20 +62,21 @@ export const getUser = async(req, res)=>{
 
 export const deleteUser = async (req, res)=>{
     try{
-        const { id } = req.params.id;
+        const { id } = req.params;
         const user = await User.findByIdAndDelete(id);
-        if(!item){
+        if(!user){
             return res.status(404).json({
                 success: false,
-                msg: `There is no item with id: ${id}`
+                msg: `There is no user with id: ${id}`
+            });
+        }else{
+            return res.status(200).json({
+                success: true,
+                msg: `User with id: ${id} deleted successfully`
             });
         }
-        return res.status(200).json({
-            success: true,
-            msg: `Item with id: ${id} deleted successfully`
-        });
     }catch(error){
-        return res.status(500).json({
+        res.status(500).json({
             success: false,
             msg: error
         });
@@ -105,7 +107,8 @@ export const updateUser = async (req, res)=> {
         }
         return res.status(200).json({
             success: true,
-            data: user
+            data: user,
+            msg: `User with id: ${id} has been updated`
         })
     }catch(error){
         return res.status(500).json({
